@@ -1,0 +1,116 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
+group 'jforeign'
+version '0.1.0'
+
+sourceSets {
+    java9 {
+        java {
+            srcDirs = ['src/main/java', 'src/main/java9']
+        }
+    }
+}
+
+compileJava {
+    sourceCompatibility = 8
+    targetCompatibility = 8
+}
+
+compileJava9Java {
+    sourceCompatibility = 9
+    targetCompatibility = 9
+}
+
+javadoc {
+    source = sourceSets.java9.allJava
+
+    options {
+        encoding = 'UTF-8'
+        locale = 'en_US'
+    }
+
+    options.addStringOption('link', 'https://docs.oracle.com/en/java/javase/11/docs/api/')
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+
+jar {
+    into('META-INF/versions/9') {
+        from sourceSets.java9.output
+        include 'module-info.class'
+    }
+
+    manifest.attributes(
+            'Multi-Release': 'true'
+    )
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.java9.allJava
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+
+publishing {
+    publications {
+        JforeignPublication(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = project.name
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'glavo'
+                        name = 'Glavo'
+                        email = 'zjx001202@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['JforeignPublication']
+    pkg {
+        repo = 'maven'
+        name = 'jforeign-common'
+        userOrg = 'jforeign'
+        licenses = ['Apache-2.0']
+        publicDownloadNumbers = true
+        version {
+            name = project.version
+            desc = "${project.name} ${project.version}"
+            vcsTag = project.version
+        }
+    }
+}
