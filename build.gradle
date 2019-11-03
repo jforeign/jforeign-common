@@ -11,7 +11,7 @@ plugins {
 }
 
 group 'jforeign'
-version '0.1.1-SHAPSHOT'
+version '0.1.1'
 
 sourceSets {
     java9 {
@@ -103,8 +103,8 @@ bintray {
     publications = ['JforeignPublication']
     pkg {
         repo = 'maven'
-        name = 'jforeign-common'
-        userOrg = 'jforeign'
+        name = project.name
+        userOrg = project.group
         licenses = ['Apache-2.0']
         publicDownloadNumbers = true
         version {
