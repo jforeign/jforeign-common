@@ -114,3 +114,11 @@ bintray {
         }
     }
 }
+
+task upload {
+
+}
+
+if(!project.version.toString().endsWith("SHAPSHOT")) {
+    upload.dependsOn(bintrayUpload)
+}
