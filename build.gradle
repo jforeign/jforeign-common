@@ -10,8 +10,8 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
-group 'jforeign'
-version '0.1.2-SHAPSHOT'
+group 'xyz.jforeign'
+version '0.1.2'
 
 sourceSets {
     java9 {
@@ -104,7 +104,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = project.name
-        userOrg = project.group
+        userOrg = 'jforeign'
         licenses = ['Apache-2.0']
         publicDownloadNumbers = true
         version {
